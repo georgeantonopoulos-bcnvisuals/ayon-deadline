@@ -301,12 +301,21 @@ class ProcessSubmittedCacheJobOnFarm(pyblish.api.InstancePlugin,
             "fps": instance_skeleton_data["fps"],
             "source": instance_skeleton_data["source"],
             "user": instance.context.data["user"],
-            "version": instance.context.data["version"],  # workfile version
             "intent": instance.context.data.get("intent"),
             "comment": instance.context.data.get("comment"),
             "job": render_job or None,
             "instances": instances
         }
+
+        # Note that a version of 0 is a valid version number,
+        # so we explicitly check for `None` value
+        # instance override version
+        collected_version = instance.data.get("version")
+        if collected_version is None:
+            # workfile version
+            collected_version = instance.context.data.get("version")
+        if collected_version is not None:
+            publish_job["version"] = collected_version
 
         if deadline_publish_job_id:
             publish_job["deadline_publish_job_id"] = deadline_publish_job_id
