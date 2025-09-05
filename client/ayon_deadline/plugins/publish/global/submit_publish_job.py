@@ -155,6 +155,31 @@ class ProcessSubmittedJobOnFarm(pyblish.api.InstancePlugin,
 
     add_rendered_dependencies = False
 
+    def _ensure_review_tag_on_primary_image(self, instances):
+        """Ensure a 'review' tag exists on an image representation.
+
+        This helps the downstream ExtractReview step on farm detect the
+        input image sequence to transcode into a reviewable video when
+        publishing remotely. It is a no-op if a suitable representation
+        already has the tag.
+
+        Args:
+            instances (list[dict]): Instances prepared for farm publish
+                containing 'representations'.
+        """
+        image_exts = {"exr", "png", "jpg", "jpeg", "tif", "tiff"}
+        for inst in instances:
+            for repre in inst.get("representations", []):
+                ext = repre.get("ext")
+                if not ext or ext.lower() not in image_exts:
+                    continue
+                # Only append to existing list-type tags to avoid schema/type changes
+                if "tags" in repre and isinstance(repre["tags"], list):
+                    if "review" not in repre["tags"]:
+                        repre["tags"].append("review")
+                    # Tag only the first suitable image representation
+                    return
+
 
     def _submit_deadline_post_job(
         self, instance, render_job, instances, rootless_metadata_path
@@ -391,6 +416,13 @@ class ProcessSubmittedJobOnFarm(pyblish.api.InstancePlugin,
             instances = attach_instances_to_product(
                 instance.data.get("attachTo"), instances
             )
+
+        # Ensure review tag on image representation for Houdini farm publishes
+        if (
+            not do_not_add_review
+            and instance.context.data.get("hostName") == "houdini"
+        ):
+            self._ensure_review_tag_on_primary_image(instances)
 
         r''' SUBMiT PUBLiSH JOB 2 D34DLiN3
           ____
