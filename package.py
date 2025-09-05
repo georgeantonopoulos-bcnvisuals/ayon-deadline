@@ -2,7 +2,7 @@ name = "deadline"
 title = "Deadline"
 version = "0.5.15"
 
-client_dir = "ayon_deadline"
+client_dir = "ayon_deadline-bcn.1"
 
 ayon_required_addons = {
     "core": ">1.0.9",

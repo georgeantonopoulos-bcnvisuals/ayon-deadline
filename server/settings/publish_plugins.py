@@ -564,7 +564,13 @@ DEFAULT_DEADLINE_PLUGINS_SETTINGS = {
                 "value": [
                     ".*"
                 ]
-            }
+            },
+            {
+                "name": "houdini",
+                "value": [
+                    ".*"
+                ]
+            },
         ],
         "add_rendered_dependencies": False
     }

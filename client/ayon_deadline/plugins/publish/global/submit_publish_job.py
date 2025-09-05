@@ -119,6 +119,14 @@ class ProcessSubmittedJobOnFarm(pyblish.api.InstancePlugin,
             "name": "max",
             "value": [r".*"]
         },
+        {
+            "name": "fusion",
+            "value": [r".*"]
+        },
+        {
+            "name": "houdini",
+            "value": [r".*"]
+        },
     ]
 
     # custom deadline attributes
